@@ -10,12 +10,13 @@ config = {
   "messagingSenderId": "226041239875",
   "appId": "1:226041239875:web:3e92efb2690df00c9b37f6",
   "measurementId": "G-P3ERC997RB",
-  "databaseURL": ""
+  "databaseURL": "https://roei-s-project-e8706-default-rtdb.europe-west1.firebasedatabase.app/"
 
 }
 
 firebase  = pyrebase.initialize_app(config)
 auth = firebase.auth()
+db = firebase.database()
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -44,6 +45,8 @@ def signup():
        password = request.form['password']
        try:
             login_session['user'] = auth.create_user_with_email_and_password(email, password)
+            user = ["name" : Full Name, "email": Email, "password": password, "bio": Bio, "username", Username]
+            db.child("Users").child(login_session['user']['localId']).set(user)
             return redirect(url_for('add'))
        except:
             error = "Authentication failed"
