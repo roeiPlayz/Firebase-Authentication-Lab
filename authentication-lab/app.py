@@ -41,28 +41,41 @@ def signin():
 def signup():
     error = ""
     if request.method == 'POST':
-       email = request.form['email']
-       password = request.form['password']
-       try:
+        email = request.form['email']
+        password = request.form['password']
+        try:
             login_session['user'] = auth.create_user_with_email_and_password(email, password)
-            user = ["name" : Full Name, "email": Email, "password": password, "bio": Bio, "username", Username]
+            user = {"name" : request.form['Full Name'], "email": request.form['email'], "password": request.form['password'], "bio": request.form['Bio'], "username": request.form['Username']}
             db.child("Users").child(login_session['user']['localId']).set(user)
-            return redirect(url_for('add'))
-       except:
+            return redirect(url_for('add_tweet'))
+        except:
             error = "Authentication failed"
     return render_template("signup.html")
 
 
 @app.route('/add_tweet', methods=['GET', 'POST'])
 def add_tweet():
+    
+    if request.method == 'POST':
+        try:
+            tweet = {"title": request.form['title'], "text": request.form['text'], "uid": login_session['user']['localId']}
+            db.child("Tweets").push(tweet)
+            return redirect(url_for("/all_tweets"))
+        except:
+            print("error")
     return render_template("add_tweet.html")
 
 
-@app.route('/signout')
+@app.route('/signout', methods = ['GET', 'POST'])
 def signout():
     login_session['user'] = None
     auth.current_user = None
     return redirect(url_for('signin'))
+
+@app.route('/all_tweets', methods = ['GET', 'POST'])
+def all_tweets():
+    return render_template("all_tweets.html", tweet = db.child("Tweets").child().get().val())
+
 
 
 if __name__ == '__main__':

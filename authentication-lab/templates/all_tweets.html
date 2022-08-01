@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+        <div>
+            {%for k in tweet%}
+            <h1>{{tweet[k]["title"]}}</h1>
+            <p>{{tweet[k]["text"]}}</p>
+            {%endfor%}
+        </div>
+    <br>
+    <a href="/signout"><button>signout</button></a>
+</body>
+</html>
